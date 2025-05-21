@@ -30,7 +30,7 @@ def generate_machine_loss_report(df):
 
 if uploaded_file:
     try:
-        df = pd.read_csv(uploaded_file)
+        df = pd.read_csv(uploaded_file, encoding='utf-8')
 
         # Validate necessary columns
         required_cols = {'分切机台', '加工量', '实际损耗'}
