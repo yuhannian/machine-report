@@ -22,7 +22,7 @@ uploaded_file = st.file_uploader("请上传CSV格式的发货数据", type="csv"
 
 if uploaded_file:
     try:
-        df = pd.read_csv(uploaded_file, encoding='utf-8')
+        df = pd.read_csv(uploaded_file, encoding='utf-8-sig')
 
         # Check required columns
         required_cols = {'商品', '品名', '品牌', '业务员', '数量'}
