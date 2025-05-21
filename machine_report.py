@@ -3,10 +3,14 @@ import pandas as pd
 from io import BytesIO, StringIO
 
 DAILY_PRODUCTION_MIN = 50
+
 st.set_page_config(page_title="分切机台损耗报表", layout="centered")
 st.title("📊 分切机台日损耗报表生成器")
 
-uploaded_file = st.file_uploader("📂 请上传发货数据 CSV 文件（必须包含：分切机台，加工量，实际损耗）", type="csv")
+uploaded_file = st.file_uploader("📂 请上传发货数据 CSV 文件（支持中文文件名，无需更改）", type="csv")
+
+def contains_chinese(text):
+    return any('\u4e00' <= ch <= '\u9fff' for ch in text)
 
 def generate_machine_loss_report(df):
     grouped = df.groupby('分切机台')[['加工量', '实际损耗']].sum().reset_index()
@@ -28,6 +32,10 @@ def generate_machine_loss_report(df):
 
 if uploaded_file:
     try:
+        file_name = uploaded_file.name
+        if contains_chinese(file_name):
+            st.info(f"📄 检测到中文文件名：{file_name}，已自动处理。")
+
         content = uploaded_file.getvalue().decode("utf-8-sig")
         df = pd.read_csv(StringIO(content))
 
@@ -39,7 +47,6 @@ if uploaded_file:
 
             st.success("✅ 损耗报表生成成功！")
             st.dataframe(report_df, use_container_width=True)
-
 
             if total_volume < DAILY_PRODUCTION_MIN:
                 st.error(f"⚠️ 总加工量为 {total_volume:.2f} 吨，低于最低生产标准（{DAILY_PRODUCTION_MIN} 吨）！")
@@ -58,4 +65,4 @@ if uploaded_file:
             )
 
     except Exception as e:
-        st.error(f"❌ 读取或处理文件出错: {e}")
+        st.error(f"❌ 文件处理出错：{e}")
