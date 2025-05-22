@@ -8,7 +8,7 @@ st.title("📊 销售报表自动生成工具")
 
 uploaded_file = st.file_uploader("📂 请上传 CSV 或 Excel 格式的发货数据", type=["csv", "xlsx"])
 
-ef sales_report(df):
+def sales_report(df):
     pivot = pd.pivot_table(
         df,
         index=['商品', '品名', '品牌'],
