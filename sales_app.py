@@ -1,5 +1,12 @@
 import streamlit as st
 import pandas as pd
+from io import BytesIO, StringIO
+
+
+st.set_page_config(page_title="销售报表自动生成工具", layout="centered")
+st.title("📊 销售报表自动生成工具")
+
+uploaded_file = st.file_uploader("📂 请上传 CSV 或 Excel 格式的发货数据", type=["csv", "xlsx"])
 
 def sales_report(df):
     pivot = pd.pivot_table(
@@ -16,28 +23,54 @@ def sales_report(df):
     final = pd.concat([pivot, pd.DataFrame([total_row])])
     return final.reset_index()
 
-st.title("📊 销售报表自动生成工具")
+def read_file_flexibly(uploaded_file):
+    file_name = uploaded_file.name.lower()
 
-uploaded_file = st.file_uploader("请上传CSV格式的发货数据", type="csv")
+    if file_name.endswith(".csv"):
+        try:
+            content = uploaded_file.getvalue().decode('utf-8-sig')
+            return pd.read_csv(StringIO(content)), "csv（utf-8）"
+        except UnicodeDecodeError:
+            try:
+                content = uploaded_file.getvalue().decode('gbk')
+                return pd.read_csv(StringIO(content)), "csv（gbk）"
+            except Exception as e:
+                st.error(f"❌ CSV 文件读取失败：{e}")
+                st.stop()
+
+    elif file_name.endswith(".xlsx"):
+        try:
+            return pd.read_excel(uploaded_file), "excel"
+        except Exception as e:
+            st.error(f"❌ Excel 文件读取失败：{e}")
+            st.stop()
+
+    else:
+        st.error("❌ 不支持的文件格式，请上传 .csv 或 .xlsx 文件。")
+        st.stop()
 
 if uploaded_file:
     try:
-        df = pd.read_csv(uploaded_file, encoding='utf-8-sig')
+        df, file_type = read_file_flexibly(uploaded_file)
+        st.success(f"✅ 文件读取成功（类型：{file_type}）")
 
-        # Check required columns
         required_cols = {'商品', '品名', '品牌', '业务员', '数量'}
         if not required_cols.issubset(df.columns):
-            st.error(f"文件缺少必要的列: {required_cols}")
+            st.error(f"❌ 文件缺少以下必要列：{required_cols - set(df.columns)}")
         else:
             report = sales_report(df)
             st.success("✅ 销售报表生成成功！")
             st.dataframe(report, use_container_width=True)
-
-            # Download as Excel
-            from io import BytesIO
             output = BytesIO()
             with pd.ExcelWriter(output, engine='openpyxl') as writer:
                 report.to_excel(writer, index=False, sheet_name='销售汇总')
-            st.download_button("📥 下载报表为 Excel", data=output.getvalue(), file_name="销售汇总.xlsx", mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+            st.download_button(
+                label="📥 下载报表为 Excel",
+                data=output.getvalue(),
+                file_name="销售汇总.xlsx",
+                mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+
     except Exception as e:
-        st.error(f"❌ 出错了: {e}")
+        st.error(f"❌ 报表生成失败：{e}")
