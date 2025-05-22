@@ -25,6 +25,9 @@ def sales_report(df):
     final.columns.values[0:3] = ['二级分类', '一级分类', '末级分类']
     return final
 
+def read_file_flexibly(uploaded_file):
+    file_name = uploaded_file.name.lower()
+
     if file_name.endswith(".csv"):
         try:
             content = uploaded_file.getvalue().decode('utf-8-sig')
