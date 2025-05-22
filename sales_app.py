@@ -8,7 +8,7 @@ st.title("📊 销售报表自动生成工具")
 
 uploaded_file = st.file_uploader("📂 请上传 CSV 或 Excel 格式的发货数据", type=["csv", "xlsx"])
 
-def sales_report(df):
+ef sales_report(df):
     pivot = pd.pivot_table(
         df,
         index=['商品', '品名', '品牌'],
@@ -21,10 +21,9 @@ def sales_report(df):
     total_row = pivot.sum(axis=0)
     total_row.name = ('合计', '', '')
     final = pd.concat([pivot, pd.DataFrame([total_row])])
-    return final.reset_index()
-
-def read_file_flexibly(uploaded_file):
-    file_name = uploaded_file.name.lower()
+    final = final.reset_index()
+    final.columns.values[0:3] = ['二级分类', '一级分类', '末级分类']
+    return final
 
     if file_name.endswith(".csv"):
         try:
