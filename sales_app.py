@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 from io import BytesIO, StringIO
+from datetime import datetime
+
 
 
 st.set_page_config(page_title="销售报表自动生成工具", layout="centered")
@@ -66,11 +68,12 @@ if uploaded_file:
             output = BytesIO()
             with pd.ExcelWriter(output, engine='openpyxl') as writer:
                 report.to_excel(writer, index=False, sheet_name='销售汇总')
-
+            today_str = datetime.now().strftime("%m%d") 
+            file_name = f"{today_str}_销售汇总.xlsx"
             st.download_button(
                 label="📥 下载报表为 Excel",
                 data=output.getvalue(),
-                file_name="销售汇总.xlsx",
+                file_name=file_name,
                 mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             )
 
