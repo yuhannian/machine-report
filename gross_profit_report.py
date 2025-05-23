@@ -21,7 +21,7 @@ def gross_profit_report(df):
         fill_value=0
     )
 
-    pivot['净毛利合计'] = pivot['净毛利'].sum(axis=1)
+    pivot['净毛利合计'] = pivot.sum(axis=1)
     total_row = pivot.sum(axis=0)
     total_row.name = ('合计', '', '')
     final = pd.concat([pivot, pd.DataFrame([total_row])])
