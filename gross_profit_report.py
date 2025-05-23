@@ -5,8 +5,8 @@ from datetime import datetime
 
 
 
-st.set_page_config(page_title="销售+毛利报表自动生成工具", layout="centered")
-st.title("📊 销售+毛利自动生成工具")
+st.set_page_config(page_title="毛利报表自动生成工具", layout="centered")
+st.title("📊 毛利自动生成工具")
 
 uploaded_file = st.file_uploader("📂 请上传 CSV 或 Excel 文件", type=["csv", "xls", "xlsx"])
 
@@ -16,12 +16,11 @@ def gross_profit_report(df):
         df,
         index=['商品级次', '商品', '末级分类'],
         columns='业务员',
-        values=['销售金额（含税）', '净毛利'],
+        values=['净毛利'],
         aggfunc='sum',
         fill_value=0
     )
 
-    pivot['销售金额合计'] = pivot['销售金额（含税）'].sum(axis=1)
     pivot['净毛利合计'] = pivot['净毛利'].sum(axis=1)
     total_row = pivot.sum(axis=0)
     total_row.name = ('合计', '', '')
@@ -71,18 +70,18 @@ if uploaded_file:
 
         st.success(f"✅ 文件读取成功（类型：{file_type}）")
 
-        required_cols = {'商品级次', '商品', '商品描述', '业务员', '销售金额（含税）','净毛利'}
+        required_cols = {'商品级次', '商品', '商品描述', '业务员', '净毛利'}
         if not required_cols.issubset(df.columns):
             st.error(f"❌ 文件缺少以下必要列：{required_cols - set(df.columns)}")
         else:
             report = gross_profit_report(df)
-            st.success("✅ 销售毛利报表生成成功！")
+            st.success("✅ 毛利报表生成成功！")
             st.dataframe(report, use_container_width=True)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='openpyxl') as writer:
                 report.to_excel(writer, index=False, sheet_name='销售汇总')
             today_str = datetime.now().strftime("%m%d") 
-            file_name = f"{today_str}_销售毛利.xlsx"
+            file_name = f"{today_str}_毛利.xlsx"
             st.download_button(
                 label="📥 下载报表为 Excel",
                 data=output.getvalue(),
