@@ -26,6 +26,8 @@ def gross_profit_report(df):
     total_row.name = ('合计', '', '')
     final = pd.concat([pivot, pd.DataFrame([total_row])])
     final = final.reset_index()
+    final.columns.values[0:3] = ['二级分类', '一级分类', '末级分类']
+
 
     return final
 
