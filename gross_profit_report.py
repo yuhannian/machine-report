@@ -74,7 +74,7 @@ if uploaded_file:
         if not required_cols.issubset(df.columns):
             st.error(f"❌ 文件缺少以下必要列：{required_cols - set(df.columns)}")
         else:
-            report = sales_report(df)
+            report = gross_profit_report(df)
             st.success("✅ 销售毛利报表生成成功！")
             st.dataframe(report, use_container_width=True)
             output = BytesIO()
