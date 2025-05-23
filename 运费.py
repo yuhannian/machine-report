@@ -16,6 +16,7 @@ if uploaded_file:
 
         df = shipping_cost[
             shipping_cost['运费组'].notna() &
+            shipping_cost['上车费B'] & 
             shipping_cost['客户吨位'].notna() &
             shipping_cost['最大距离'].notna()
         ].copy()
@@ -34,7 +35,7 @@ if uploaded_file:
         df['客户分摊运费'] = df['客户分摊运费'].round(2)
 
         st.success("✅ 运费分摊计算成功！")
-        st.dataframe(df[['运费组', '客户吨位', '最大距离', '吨公里', '总运费', '客户分摊运费']], use_container_width=True)
+        st.dataframe(df[['运费组', '上车费B','客户吨位', '最大距离', '吨公里', '总运费', '客户分摊运费']], use_container_width=True)
 
         today_str = datetime.now().strftime("%m%d")
         file_name = f"{today_str}_运费分摊结果.xlsx"
