@@ -70,7 +70,7 @@ if uploaded_file:
 
         st.success(f"✅ 文件读取成功（类型：{file_type}）")
 
-        required_cols = {'商品', '品名', '品牌', '业务员', '数量'}
+        required_cols = {'商品级次', '商品', '商品描述', '业务员', '销售金额','净毛利'}
         if not required_cols.issubset(df.columns):
             st.error(f"❌ 文件缺少以下必要列：{required_cols - set(df.columns)}")
         else:
