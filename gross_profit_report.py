@@ -16,7 +16,7 @@ def gross_profit_report(df):
         df,
         index=['商品级次', '商品', '末级分类'],
         columns='业务员',
-        values=['净毛利'],
+        values='净毛利',
         aggfunc='sum',
         fill_value=0
     )
@@ -26,11 +26,7 @@ def gross_profit_report(df):
     total_row.name = ('合计', '', '')
     final = pd.concat([pivot, pd.DataFrame([total_row])])
     final = final.reset_index()
-    final.rename(columns={
-    final.columns[0]: '二级分类',
-    final.columns[1]: '一级分类',
-    final.columns[2]: '末级分类'
-    }, inplace=True)
+    final.columns.values[0:3] = ['二级分类', '一级分类', '末级分类']
 
 
     return final
