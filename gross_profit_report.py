@@ -46,7 +46,7 @@ def read_file_flexibly(uploaded_file):
                 st.error(f"❌ CSV 文件读取失败：{e}")
                 st.stop()
 
-    elif file_name.endswith(".xlsx"):
+    elif file_name.endswith((".xlsx", ".xls")):
         try:
             return pd.read_excel(uploaded_file), "excel"
         except Exception as e:
@@ -54,7 +54,7 @@ def read_file_flexibly(uploaded_file):
             st.stop()
 
     else:
-        st.error("❌ 不支持的文件格式，请上传 .csv 或 .xlsx 文件。")
+        st.error("❌ 不支持的文件格式，请上传 .csv 或.xlsx 或.xls文件。")
         st.stop()
 
 if uploaded_file:
