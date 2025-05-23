@@ -8,7 +8,8 @@ from datetime import datetime
 st.set_page_config(page_title="销售+毛利报表自动生成工具", layout="centered")
 st.title("📊 销售+毛利自动生成工具")
 
-uploaded_file = st.file_uploader("📂 请上传 CSV 或 Excel 格式的发货数据", type=["csv", "xlsx"])
+uploaded_file = st.file_uploader("📂 请上传 CSV 或 Excel 文件", type=["csv", "xls", "xlsx"])
+
 
 def gross_profit_report(df):
     pivot = pd.pivot_table(
